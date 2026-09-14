@@ -23,7 +23,7 @@ export function App({ session }: { session: Session }) {
   const settings = useSettings();
   const gcal = useGcal();
 
-  const [panelOpen, setPanelOpen] = useState(() => {
+  const [panelOpen, setPanelOpenState] = useState(() => {
     try {
       const v = localStorage.getItem(PANEL_KEY);
       return v === null ? !window.matchMedia(NARROW).matches : v === '1';
@@ -31,13 +31,17 @@ export function App({ session }: { session: Session }) {
       return true;
     }
   });
-  useEffect(() => {
-    try {
-      localStorage.setItem(PANEL_KEY, panelOpen ? '1' : '0');
-    } catch {
-      /* ignore */
-    }
-  }, [panelOpen]);
+  // Remember only explicit choices, so a narrow first load doesn't hide the panel forever.
+  const setPanelOpen = (next: boolean | ((prev: boolean) => boolean)) =>
+    setPanelOpenState((prev) => {
+      const v = typeof next === 'function' ? next(prev) : next;
+      try {
+        localStorage.setItem(PANEL_KEY, v ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+      return v;
+    });
 
   const [blockTarget, setBlockTarget] = useState<BlockTarget | null>(null);
   const [extTarget, setExtTarget] = useState<ExternalEvent | null>(null);
