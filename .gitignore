@@ -1,0 +1,11 @@
+node_modules
+dist
+dev-dist
+.env
+.env.local
+.env.*.local
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz

@@ -1,0 +1,101 @@
+\documentclass[a4paper,landscape,10pt]{ltjsarticle}
+\usepackage{luatexja}
+\usepackage[margin=5mm]{geometry}
+\usepackage{tikz}
+\pagestyle{empty}
+
+\begin{document}
+\noindent
+\centering
+\begin{tikzpicture}[x=1mm, y=1mm]
+
+    % --- Grid Lines ---
+    % Outer border (A4 landscape is 297x210, with 5mm margin -> 287x200 available)
+    % Using 198mm height to avoid overfull page issues
+    \draw[thick] (0, 0) rectangle (287, 198);
+    
+    % Vertical separators for Day columns (Left col 42, then 7 days of 35mm = 245. Total 287)
+    \foreach \i in {0,1,2,3,4,5,6,7} {
+        \draw[thick] (42 + 35*\i, 0) -- (42 + 35*\i, 198);
+    }
+    
+    % Horizontal lines
+    \draw[thick] (0, 191) -- (287, 191); % Bottom of Month row (7mm height)
+    \draw[thick] (0, 161) -- (287, 161); % Bottom of Daily Priorities (30mm height)
+    \draw[gray, thin] (42, 181) -- (287, 181); % Daily Priorities sub-line 1
+    \draw[gray, thin] (42, 171) -- (287, 171); % Daily Priorities sub-line 2
+    \draw[thick] (42, 156) -- (287, 156); % Vision | Real bottom border
+
+    % --- Left Column ---
+    % Month
+    \node[anchor=south west, font=\sffamily\bfseries] at (2, 192) {Month};
+    
+    % Daily Priorities
+    \node[anchor=north west, font=\sffamily\bfseries] at (2, 190) {Daily Priorities};
+    \node[anchor=north west, font=\sffamily\scriptsize] at (2, 185) {今日優先すること};
+    
+    % Weekly Priorities
+    \pgfmathsetmacro{\secH}{51} % Height of each section
+    \pgfmathsetmacro{\baseY}{161}
+    \node[anchor=north west, font=\sffamily\bfseries] at (2, \baseY-1) {Weekly Priorities};
+    \node[anchor=north west, font=\sffamily\scriptsize] at (2, \baseY-6) {今週優先すること};
+    \foreach \j in {0,1,2,3} {
+        \pgfmathsetmacro{\ly}{\baseY - 16 - \j*11.5}
+        \node[circle, draw=black, inner sep=1.5pt] at (5, \ly) {};
+        \draw[gray, thin] (8, \ly-1) -- (40, \ly-1);
+    }
+
+    % Micro Success
+    \pgfmathsetmacro{\baseY}{108}
+    \node[anchor=north west, font=\sffamily\bfseries] at (2, \baseY-1) {Micro Success};
+    \node[anchor=north west, font=\sffamily\scriptsize] at (2, \baseY-6) {小さな成功};
+    \foreach \j in {0,1,2,3} {
+        \pgfmathsetmacro{\ly}{\baseY - 16 - \j*11.5}
+        \node[circle, draw=black, inner sep=1.5pt] at (5, \ly) {};
+        \draw[gray, thin] (8, \ly-1) -- (40, \ly-1);
+    }
+
+    % Weekly Evaluation
+    \pgfmathsetmacro{\baseY}{55}
+    \node[anchor=north west, font=\sffamily\bfseries] at (2, \baseY-1) {Weekly Evaluation};
+    \node[anchor=north west, font=\sffamily\scriptsize] at (2, \baseY-6) {今週の振り返り};
+    \foreach \j in {0,1,2,3} {
+        \pgfmathsetmacro{\ly}{\baseY - 16 - \j*11.5}
+        \node[circle, draw=black, inner sep=1.5pt] at (5, \ly) {};
+        \draw[gray, thin] (8, \ly-1) -- (40, \ly-1);
+    }
+
+    % --- Timeline Dotted Lines ---
+    \foreach \h in {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17} {
+        \draw[gray, dotted] (42, 156 - \h*8.5 - 4.25) -- (287, 156 - \h*8.5 - 4.25);
+    }
+
+    % --- Day Columns ---
+    \foreach \i/\day in {0/SUN, 1/MON, 2/TUE, 3/WED, 4/THU, 5/FRI, 6/SAT} {
+        \pgfmathsetmacro{\xl}{42 + 35*\i}
+        \pgfmathsetmacro{\xc}{\xl + 17.5}
+        
+        % Day Text
+        \node[anchor=south east, font=\sffamily\bfseries] at (\xl+33, 192) {\day};
+        
+        % Daily Priorities (Dots)
+        \foreach \ypos in {186, 176, 166} {
+            \node[circle, draw=black, inner sep=1.5pt] at (\xl+2.5, \ypos) {};
+        }
+        
+        % Vision | Real Header
+        \node[anchor=center, font=\sffamily\tiny] at (\xl+8.75, 158.5) {Vision};
+        \node[anchor=center, font=\sffamily\tiny] at (\xl+26.25, 158.5) {Real};
+        
+        % Central Vertical Line
+        \draw[gray, thin] (\xc, 0) -- (\xc, 156);
+        
+        % Timeline Numbers (5 to 22)
+        \foreach \h in {5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22} {
+            \pgfmathsetmacro{\yval}{156 - (\h-5)*8.5}
+            \node[circle, fill=white, draw=gray, inner sep=0.5pt, font=\sffamily\tiny] at (\xc, \yval) {\h};
+        }
+    }
+
+\end{tikzpicture}
+\end{document}
