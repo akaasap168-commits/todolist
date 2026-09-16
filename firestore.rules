@@ -8,7 +8,7 @@ service cloud.firestore {
     function isOwner(uid) {
       return request.auth != null
         && request.auth.uid == uid
-        && uid in ['REPLACE_WITH_YOUR_UID'];
+        && uid in ['tBDIDFkkbgZiSO9PFgf0u2kupoG2'];
     }
 
     match /users/{uid}/{document=**} {
