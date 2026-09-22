@@ -75,3 +75,26 @@ export interface ExternalEvent {
   allDay: boolean;
   color?: string;
 }
+
+/** A saved day shape that can be applied to any date. */
+export interface TemplateBlock {
+  start: number;
+  end: number;
+  title: string;
+  categoryId?: string;
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  blocks: TemplateBlock[];
+  priorities?: string[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+/** The sticky note: one short, temporary memo. */
+export interface Scratch {
+  text: string;
+  updatedAt: number;
+}

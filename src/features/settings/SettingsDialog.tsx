@@ -207,6 +207,7 @@ export function SettingsDialog({ session, onClose }: { session: Session; onClose
             <tr><td><kbd>T</kbd></td><td>今日へ</td></tr>
             <tr><td><kbd>W</kbd> / <kbd>D</kbd></td><td>週ビュー / 日ビュー</td></tr>
             <tr><td><kbd>N</kbd></td><td>ToDo を追加</td></tr>
+            <tr><td><kbd>M</kbd></td><td>一時メモ（付箋）の開閉</td></tr>
             <tr><td><kbd>/</kbd></td><td>検索</td></tr>
             <tr><td><kbd>Esc</kbd></td><td>ダイアログを閉じる</td></tr>
           </tbody>
