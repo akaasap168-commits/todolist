@@ -5,6 +5,8 @@ import { AppDataProvider } from './data/hooks';
 import { FirestoreStore, LocalStore } from './data/store';
 import { firebaseEnabled, getFirebase } from './firebase';
 import { GcalProvider } from './features/calendar/GcalContext';
+import { PomodoroProvider } from './features/pomodoro/PomodoroContext';
+import { SpotifyProvider } from './features/pomodoro/SpotifyContext';
 
 export interface Session {
   mode: 'local' | 'firebase';
@@ -97,7 +99,11 @@ function Shell({ store, session }: { store: LocalStore | FirestoreStore; session
   return (
     <AppDataProvider store={store}>
       <GcalProvider>
-        <App session={session} />
+        <SpotifyProvider>
+          <PomodoroProvider>
+            <App session={session} />
+          </PomodoroProvider>
+        </SpotifyProvider>
       </GcalProvider>
     </AppDataProvider>
   );
