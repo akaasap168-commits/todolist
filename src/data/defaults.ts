@@ -13,6 +13,18 @@ export const DEFAULT_SETTINGS: Settings = {
     { id: 'move', name: '移動', color: '#e36f5a' },
   ],
   weeklySectionRows: 4,
+  pomodoro: {
+    preset: 25,
+    autoRecord: true,
+    recordCategoryId: undefined,
+    notify: true,
+    chime: true,
+    focusSound: 'river',
+    focusVolume: 0.5,
+    breakSource: 'none',
+    breakVolume: 0.6,
+    spotify: { contextUri: '', contextName: '', deviceId: '', shuffle: true },
+  },
   gcal: { importCalendarIds: [], exportCalendarId: '' },
 };
 
@@ -21,6 +33,11 @@ export function normalizeSettings(s: Partial<Settings> | null | undefined): Sett
     ...DEFAULT_SETTINGS,
     ...(s ?? {}),
     gcal: { ...DEFAULT_SETTINGS.gcal, ...(s?.gcal ?? {}) },
+    pomodoro: {
+      ...DEFAULT_SETTINGS.pomodoro,
+      ...(s?.pomodoro ?? {}),
+      spotify: { ...DEFAULT_SETTINGS.pomodoro.spotify, ...(s?.pomodoro?.spotify ?? {}) },
+    },
   };
 }
 

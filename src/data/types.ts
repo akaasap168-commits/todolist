@@ -58,6 +58,7 @@ export interface Settings {
   weekStartsOn: 0 | 1;
   categories: Category[];
   weeklySectionRows: number;
+  pomodoro: PomodoroSettings;
   gcal: {
     importCalendarIds: string[];
     exportCalendarId: string;
@@ -74,6 +75,27 @@ export interface ExternalEvent {
   end: number;
   allDay: boolean;
   color?: string;
+}
+
+/** Pomodoro timer and its background sound. Phase progress itself stays on the device. */
+export interface PomodoroSettings {
+  preset: 25 | 50; // focus length; the break is 5 or 10 to match
+  autoRecord: boolean; // write a finished focus phase into the Real lane
+  recordCategoryId?: string;
+  notify: boolean;
+  chime: boolean;
+  /** 'none' | a built-in ambient id | `file:<id>` for one of the user's own files */
+  focusSound: string;
+  focusVolume: number; // 0..1
+  breakSource: 'none' | 'spotify' | 'file';
+  breakFileId?: string;
+  breakVolume: number;
+  spotify: {
+    contextUri: string; // playlist / album to play on a break
+    contextName: string; // shown in settings, so the name survives a reload
+    deviceId: string; // '' = this tab
+    shuffle: boolean;
+  };
 }
 
 /** A saved day shape that can be applied to any date. */

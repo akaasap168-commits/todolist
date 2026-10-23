@@ -8,6 +8,10 @@ import { TemplateDialog } from './features/templates/TemplateDialog';
 import { useGcal } from './features/calendar/GcalContext';
 import { DayView } from './features/day/DayView';
 import { SearchDialog } from './features/history/SearchDialog';
+import { fmtRemaining } from './features/pomodoro/engine';
+import { usePomodoro } from './features/pomodoro/PomodoroContext';
+import { PomodoroPanel } from './features/pomodoro/PomodoroPanel';
+import { useSpotify } from './features/pomodoro/SpotifyContext';
 import { SettingsDialog } from './features/settings/SettingsDialog';
 import { TaskEditor } from './features/tasks/TaskEditor';
 import { TaskPanel } from './features/tasks/TaskPanel';
@@ -25,6 +29,9 @@ export function App({ session }: { session: Session }) {
   const [route, go] = useRoute(narrow ? 'day' : 'week');
   const settings = useSettings();
   const gcal = useGcal();
+  const pomo = usePomodoro();
+  const spotify = useSpotify();
+  const [pomoOpen, setPomoOpen] = useState(false);
 
   const [panelOpen, setPanelOpenState] = useState(() => {
     try {
@@ -112,6 +119,13 @@ export function App({ session }: { session: Session }) {
           setPanelOpen(true);
           setTimeout(() => document.getElementById('task-add-input')?.focus(), 0);
           break;
+        case 'p':
+          e.preventDefault();
+          setPomoOpen((o) => !o);
+          break;
+        case 'Escape':
+          setPomoOpen(false);
+          break;
         case 'm':
           e.preventDefault();
           setNoteOpen(!noteOpen);
@@ -182,6 +196,16 @@ export function App({ session }: { session: Session }) {
                 {gcal.connected ? '📅 更新' : '📅 接続'}
               </button>
             )}
+            <div className="pomo-anchor">
+              <button
+                className={`btn small ${pomo.cycle ? `pomo-btn ${pomo.cycle.phase}` : ''} ${pomoOpen ? 'on' : ''}`}
+                onClick={() => setPomoOpen((o) => !o)}
+                title="ポモドーロタイマー (P)"
+              >
+                {pomo.cycle ? `${pomo.cycle.phase === 'focus' ? '⏱' : '☕'} ${fmtRemaining(pomo.remaining)}` : '⏱'}
+              </button>
+              {pomoOpen && <PomodoroPanel onClose={() => setPomoOpen(false)} />}
+            </div>
             <button
               className={`btn small ${noteOpen ? 'on' : ''}`}
               onClick={() => setNoteOpen(!noteOpen)}
@@ -202,6 +226,14 @@ export function App({ session }: { session: Session }) {
           <div className="warn-banner" role="alert">
             <span>{gcal.error}</span>
             <button className="icon-btn" onClick={gcal.clearError} aria-label="閉じる">
+              ×
+            </button>
+          </div>
+        )}
+        {spotify.error && (
+          <div className="warn-banner" role="alert">
+            <span>{spotify.error}</span>
+            <button className="icon-btn" onClick={spotify.clearError} aria-label="閉じる">
               ×
             </button>
           </div>

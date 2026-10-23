@@ -1057,6 +1057,157 @@ kbd {
   color: var(--muted);
 }
 
+/* ------------------------------------------------------------ pomodoro */
+
+.pomo-anchor {
+  position: relative;
+  display: inline-flex;
+}
+.btn.pomo-btn {
+  min-width: 76px;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+.btn.pomo-btn.focus {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn.pomo-btn.break {
+  background: #2d9c69;
+  border-color: #2d9c69;
+  color: #fff;
+}
+
+.pomo {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  width: min(300px, calc(100vw - 20px));
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pomo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pomo-head h2 {
+  font-size: 14px;
+}
+.pomo p {
+  margin: 0;
+}
+.pomo select {
+  padding: 4px 6px;
+  max-width: 165px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+}
+.pomo-task {
+  margin-right: 0;
+}
+.pomo-notice {
+  padding: 8px;
+  font-size: 12px;
+  color: #7a5200;
+  background: #fff3d6;
+  border: 1px solid #f0d9a4;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pomo-presets {
+  display: flex;
+  gap: 8px;
+}
+.pomo-preset {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+}
+.pomo-preset strong {
+  font-size: 16px;
+}
+.pomo-preset span {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.pomo-run {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.pomo-phase {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+.pomo-run.break .pomo-phase {
+  color: #1f7a52;
+}
+.pomo-time {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.pomo-actions {
+  justify-content: center;
+  margin-top: 4px;
+}
+.pomo-tracks {
+  justify-content: center;
+}
+.pomo-tracks button {
+  min-width: 48px;
+  justify-content: center;
+}
+
+.pomo-sound {
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vol {
+  width: 110px;
+}
+.sound-list {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+}
+.sound-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.sound-list li span:first-child {
+  overflow-wrap: anywhere;
+}
+.err-text {
+  color: var(--danger);
+}
+
 /* ------------------------------------------------------------ narrow screens */
 
 @media (max-width: 767px) {
@@ -1091,6 +1242,17 @@ kbd {
   .h {
     height: 12px;
   }
+  .pomo {
+    position: fixed;
+    top: auto;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    width: auto;
+  }
+  .pomo select {
+    max-width: none;
+  }
   .search-results button {
     grid-template-columns: auto 1fr;
   }
@@ -1109,6 +1271,7 @@ kbd {
   }
   .toolbar,
   .tasks,
+  .pomo,
   .warn-banner,
   .icon-btn,
   .day-actions {

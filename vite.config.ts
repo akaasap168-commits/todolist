@@ -4,6 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   base: '/todolist/',
+  // Bind the loopback IP, not the name: Node resolves "localhost" to ::1 only, and
+  // Spotify's redirect URI has to be an IP literal (http://127.0.0.1:5173/todolist/).
+  server: { host: '127.0.0.1' },
   plugins: [
     react(),
     VitePWA({
