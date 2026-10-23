@@ -45,6 +45,9 @@ export function DayView({ date }: { date: string }) {
               ■ 記録終了
             </button>
           )}
+          <button className="btn small" onClick={() => ui.openTemplates(date)} title="テンプレートを適用・保存">
+            ▦ テンプレート
+          </button>
           {gcal.canExport && day.vision.length > 0 && (
             <button className="btn small ghost" onClick={() => gcal.pushDay(date, day.vision, update)}>
               📅 Vision を全部カレンダーへ

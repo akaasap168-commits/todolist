@@ -1,8 +1,10 @@
 import { addDays, format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import type { Session } from './Root';
-import { useMediaQuery, useSettings } from './data/hooks';
-import type { ExternalEvent, Task } from './data/types';
+import { useDoc, useMediaQuery, useSettings } from './data/hooks';
+import type { ExternalEvent, Scratch, Task } from './data/types';
+import { StickyNote } from './features/scratch/StickyNote';
+import { TemplateDialog } from './features/templates/TemplateDialog';
 import { useGcal } from './features/calendar/GcalContext';
 import { DayView } from './features/day/DayView';
 import { SearchDialog } from './features/history/SearchDialog';
@@ -19,6 +21,7 @@ import { fmtKeyJa, fromKey, shiftKey, todayKey, weekId, weekStartOf } from './li
 import { UIContext, useRoute, type BlockTarget, type UIApi } from './ui';
 
 const PANEL_KEY = 'planner:panel-open';
+const NOTE_KEY = 'planner:note-open';
 const NARROW = '(max-width: 767px)';
 
 export function App({ session }: { session: Session }) {
@@ -50,18 +53,42 @@ export function App({ session }: { session: Session }) {
       return v;
     });
 
+  const [noteOpen, setNoteOpenState] = useState(() => {
+    try {
+      return localStorage.getItem(NOTE_KEY) !== '0';
+    } catch {
+      return true;
+    }
+  });
+  const setNoteOpen = (v: boolean) => {
+    setNoteOpenState(v);
+    try {
+      localStorage.setItem(NOTE_KEY, v ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  };
+  const { data: scratch } = useDoc<Scratch>('meta/scratch');
+
   const [blockTarget, setBlockTarget] = useState<BlockTarget | null>(null);
   const [extTarget, setExtTarget] = useState<ExternalEvent | null>(null);
   const [taskTarget, setTaskTarget] = useState<Task | null>(null);
+  const [templateDate, setTemplateDate] = useState<string | null>(null);
   const [dialog, setDialog] = useState<'settings' | 'search' | null>(null);
 
   const ui = useMemo<UIApi>(
-    () => ({ openBlock: setBlockTarget, openExternal: setExtTarget, openTask: setTaskTarget, go }),
+    () => ({
+      openBlock: setBlockTarget,
+      openExternal: setExtTarget,
+      openTask: setTaskTarget,
+      openTemplates: setTemplateDate,
+      go,
+    }),
     [go],
   );
 
   const step = route.view === 'week' ? 7 : 1;
-  const modalOpen = !!(blockTarget || extTarget || taskTarget || dialog);
+  const modalOpen = !!(blockTarget || extTarget || taskTarget || templateDate || dialog);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -98,6 +125,11 @@ export function App({ session }: { session: Session }) {
           break;
         case 'Escape':
           setPomoOpen(false);
+          break;
+        case 'm':
+          e.preventDefault();
+          setNoteOpen(!noteOpen);
+          if (!noteOpen) setTimeout(() => document.querySelector<HTMLTextAreaElement>('.sn-text')?.focus(), 0);
           break;
         default:
           return;
@@ -174,6 +206,14 @@ export function App({ session }: { session: Session }) {
               </button>
               {pomoOpen && <PomodoroPanel onClose={() => setPomoOpen(false)} />}
             </div>
+            <button
+              className={`btn small ${noteOpen ? 'on' : ''}`}
+              onClick={() => setNoteOpen(!noteOpen)}
+              title="一時メモ (M)"
+            >
+              📌 メモ
+              {!noteOpen && scratch?.text?.trim() ? <i className="badge-dot" /> : null}
+            </button>
             <button className={`btn small ${panelOpen ? 'on' : ''}`} onClick={() => setPanelOpen((o) => !o)}>
               ✓ ToDo
             </button>
@@ -202,11 +242,13 @@ export function App({ session }: { session: Session }) {
           <main className="view">{route.view === 'week' ? <WeekView date={route.date} /> : <DayView date={route.date} />}</main>
           {panelOpen && <TaskPanel onClose={() => setPanelOpen(false)} />}
         </div>
+        {noteOpen && <StickyNote onClose={() => setNoteOpen(false)} />}
       </div>
 
       {blockTarget && <BlockEditor key={blockTarget.block.id} target={blockTarget} onClose={() => setBlockTarget(null)} />}
       {extTarget && <ExternalEventDialog event={extTarget} onClose={() => setExtTarget(null)} />}
       {taskTarget && <TaskEditor key={taskTarget.id} task={taskTarget} onClose={() => setTaskTarget(null)} />}
+      {templateDate && <TemplateDialog date={templateDate} onClose={() => setTemplateDate(null)} />}
       {dialog === 'settings' && <SettingsDialog session={session} onClose={() => setDialog(null)} />}
       {dialog === 'search' && <SearchDialog onClose={() => setDialog(null)} />}
     </UIContext.Provider>

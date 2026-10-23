@@ -26,6 +26,7 @@ export interface UIApi {
   openBlock(t: BlockTarget): void;
   openExternal(e: ExternalEvent): void;
   openTask(t: Task): void;
+  openTemplates(date: string): void;
   go(view: ViewName, date: string): void;
 }
 
@@ -107,12 +108,14 @@ export function TextField({
   placeholder,
   className = '',
   multiline,
+  rows = 3,
 }: {
   value: string;
   onCommit: (v: string) => void;
   placeholder?: string;
   className?: string;
   multiline?: boolean;
+  rows?: number;
 }) {
   const [v, setV] = useState(value);
   const focused = useRef(false);
@@ -156,7 +159,7 @@ export function TextField({
   };
 
   return multiline ? (
-    <textarea rows={3} {...props} />
+    <textarea rows={rows} {...props} />
   ) : (
     <input
       type="text"

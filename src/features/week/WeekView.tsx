@@ -55,6 +55,9 @@ export function WeekView({ date }: { date: string }) {
                       {Math.round(rate * 100)}%
                     </span>
                   )}
+                  <button className="icon-btn tiny" title="テンプレートを適用" onClick={() => ui.openTemplates(d)}>
+                    ▦
+                  </button>
                   {d === today && (
                     <button className="icon-btn tiny" title="今から記録" onClick={() => startNow(d, update, ui.openBlock)}>
                       ▶

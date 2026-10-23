@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { normalizeDay, normalizeSettings } from './defaults';
 import type { Store } from './store';
-import type { Block, DayDoc, Settings, Task } from './types';
+import type { Block, DayDoc, Settings, Task, Template } from './types';
 
 // ---------------------------------------------------------------- store
 
@@ -37,6 +37,9 @@ interface AppData {
   tasks: Task[];
   saveTask: (task: Task) => void;
   deleteTask: (id: string) => void;
+  templates: Template[];
+  saveTemplate: (t: Template) => void;
+  deleteTemplate: (id: string) => void;
 }
 
 const AppDataContext = createContext<AppData | null>(null);
@@ -44,10 +47,18 @@ const AppDataContext = createContext<AppData | null>(null);
 export function AppDataProvider({ store, children }: { store: Store; children: ReactNode }) {
   const [rawSettings, setRawSettings] = useState<Partial<Settings> | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
 
   useEffect(() => store.subscribeDoc<Settings>('meta/settings', setRawSettings), [store]);
   useEffect(
     () => store.subscribeCollection<Task>('tasks', (list) => setTasks(list.sort((a, b) => a.order - b.order))),
+    [store],
+  );
+  useEffect(
+    () =>
+      store.subscribeCollection<Template>('templates', (list) =>
+        setTemplates(list.sort((a, b) => a.createdAt - b.createdAt)),
+      ),
     [store],
   );
 
@@ -63,8 +74,14 @@ export function AppDataProvider({ store, children }: { store: Store; children: R
         void store.setDoc(`tasks/${id}`, { ...rest, updatedAt: Date.now() });
       },
       deleteTask: (id) => void store.deleteDoc(`tasks/${id}`),
+      templates,
+      saveTemplate: (t) => {
+        const { id, ...rest } = t;
+        void store.setDoc(`templates/${id}`, { ...rest, updatedAt: Date.now() });
+      },
+      deleteTemplate: (id) => void store.deleteDoc(`templates/${id}`),
     }),
-    [store, settings, tasks],
+    [store, settings, tasks, templates],
   );
 
   return (
